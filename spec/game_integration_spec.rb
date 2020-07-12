@@ -22,7 +22,6 @@ describe 'Running different game scenarios and checking the results' do
     # pending
     it "allow players to write to the grid, then returns player1 object" do
       expect(@game.board.grid).to eq([[],[],[],[],[],[],[]])
-      expect(@game.get_winner).to eq(nil)
       expect(@board.is_full?).to eq(false)
       @game.write_onboard(@player1, 3)
       expect(@game.board.grid).to eq([[],[],[],['x'],[],[],[]])
@@ -179,13 +178,14 @@ describe 'Running different game scenarios and checking the results' do
       expect(@board.is_full?).to eq(false)
       @game.write_onboard(@player2, 3)
       expect(@game.board.grid).to eq([[],[],['x'],['x','o','x','o'],['o','x','o'],['x','o'],[]])
-      expect(@game.get_winner).to eq(@player2)
+      expect(@game.get_winner).to eq(nil)
       expect(@board.is_full?).to eq(false)
       @game.write_onboard(@player1, 1)
       expect(@game.board.grid).to eq([[],['x'],['x'],['x','o','x','o'],['o','x','o'],['x','o'],[]])
       expect(@game.get_winner).to eq(nil)
       expect(@board.is_full?).to eq(false)
       @game.write_onboard(@player2, 6)
+      binding.pry
       expect(@game.board.grid).to eq([[],['x'],['x'],['x','o','x','o'],['o','x','o'],['x','o'],['o']])
       expect(@game.get_winner).to eq(@player2)
       expect(@board.is_full?).to eq(false)
