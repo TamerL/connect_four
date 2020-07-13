@@ -10,7 +10,8 @@ class Game
   attr_reader :last_played_x
   attr_reader :last_played_y
   attr_reader :char
-  attr_reader :diagonal
+  attr_reader :diagonal1
+  attr_reader :diagonal2
 
   def initialize(board:, player1:, player2:)
     @player1 = player1
@@ -23,18 +24,22 @@ class Game
     @char = @player_marker.invert[player]
     board.write_onboard(char, pos)
     @last_played_x = pos
+    @last_played_y = @board.grid[@last_played_x].length - 1
     # binding.pry
     @player_turn = @player_marker.reject { |k, v| v == player }.values.first
-    # binding.pry
+    binding.pry
   end
 
   def get_winner
     return nil if last_played_x == nil
     result = []
     # binding.pry
-    result << straight_pattern
+    result << horizontal_pattern
+    result << vertical_pattern
+
     # binding.pry
-    result << diagonal_pattern
+    result << diagonal1_pattern
+    result << diagonal2_pattern
     array = result.find { |arr| arr == ['x']*4 || arr == ['o']*4}
     if array
       # binding.pry
@@ -47,17 +52,18 @@ class Game
     end
   end
 
-  def straight_pattern
+  def horizontal_pattern
+    @last_played_y = @board.grid[@last_played_x].length - 1
+
     # binding.pry
-    last_played_y = @board.grid[@last_played_x].length - 1
     horizontal=[]
-    vertical=[]
     last_played_x > 3 ? x = Array(last_played_x - 3..6) : x = Array(0 ..last_played_x + 3)
     last_played_y > 3 ? y = Array(last_played_y - 3..6) : y = Array(0 ..last_played_y + 3)
-    @diagonal = x.product(y).select {|arr| arr[0]-arr[1] == last_played_x - last_played_y}
-    puts @diagonal
-    binding.pry
-    i,j = 0,0
+    @diagonal1 = x.product(y).select {|arr| arr[0]-arr[1] == last_played_x - last_played_y}
+    @diagonal2 = x.product(y).select {|arr| arr[0]+arr[1] == last_played_x + last_played_y}
+    # puts @diagonal1
+    # binding.pry
+    i = 0
     # iterator = x.zip(y)
     # (x.length + y.length).times{array << []}
     # binding.pry
@@ -74,6 +80,26 @@ class Game
       i += 1
       # binding.pry
     end
+    # binding.pry
+    return horizontal if horizontal == [char,char,char,char]
+    nil
+  end
+
+  def vertical_pattern
+    @last_played_y = @board.grid[@last_played_x].length - 1
+
+    # binding.pry
+    vertical=[]
+    last_played_x > 3 ? x = Array(last_played_x - 3..6) : x = Array(0 ..last_played_x + 3)
+    last_played_y > 3 ? y = Array(last_played_y - 3..6) : y = Array(0 ..last_played_y + 3)
+    @diagonal1 = x.product(y).select {|arr| arr[0]-arr[1] == last_played_x - last_played_y}
+    @diagonal2 = x.product(y).select {|arr| arr[0]+arr[1] == last_played_x + last_played_y}
+    # puts @diagonal1
+    # binding.pry
+    j = 0
+    # iterator = x.zip(y)
+    # (x.length + y.length).times{array << []}
+    # binding.pry
 
     while j < y.length do
       if @board.grid[last_played_x][y[j]] != nil && @board.grid[last_played_x][y[j]] == char
@@ -87,40 +113,50 @@ class Game
       j += 1
     end
     # binding.pry
-    return horizontal if horizontal == [char,char,char,char]
     return vertical if vertical == [char,char,char,char]
     nil
   end
 
-  def diagonal_pattern
-    diagonal1=[]
+  def diagonal1_pattern
+    diagonal1_res=[]
     # check for the data in the diagonal /
-    diagonal2=[]
     k = 0
-    # check for the data in the diagonal \
     x_diag,y_diag = [],[]
-    diagonal.each{|arr| x_diag << arr[0]; y_diag << arr[1] }
+    diagonal1.each{|arr| x_diag << arr[0]; y_diag << arr[1] }
     while k < x_diag.length do
       # binding.pry
       if @board.grid[x_diag[k]][y_diag[k]] != nil && @board.grid[x_diag[k]][y_diag[k]] == char
-        diagonal1 << @board.grid[x_diag[k]][y_diag[k]]
-        break if diagonal1.length == 4
+        diagonal1_res << @board.grid[x_diag[k]][y_diag[k]]
+        break if diagonal1_res.length == 4
       else
-        diagonal1 = []
-      end
-      # binding.pry
-      if @board.grid[x_diag[k]][y_diag[-1-k]] != nil && @board.grid[x_diag[k]][y_diag[-1-k]] == char
-        # binding.pry
-        diagonal2 << @board.grid[x_diag[k]][y_diag[-1-k]]
-        break if diagonal2.length == 4
-      else
-        diagonal2 = []
+        diagonal1_res = []
       end
       k += 1
     end
     # binding.pry
-    return diagonal1 if diagonal1 == [char,char,char,char]
-    return diagonal2 if diagonal2 == [char,char,char,char]
+    return diagonal1_res if diagonal1_res == [char,char,char,char]
+    nil
+  end
+
+  def diagonal2_pattern
+    diagonal2_res=[]
+    # check for the data in the diagonal \
+    k = 0
+    x_diag,y_diag = [],[]
+    diagonal2.each{|arr| x_diag << arr[0]; y_diag << arr[1] }
+    while k < x_diag.length do
+      # binding.pry
+      if @board.grid[x_diag[k]][y_diag[k]] != nil && @board.grid[x_diag[k]][y_diag[k]] == char
+        diagonal2_res << @board.grid[x_diag[k]][y_diag[k]]
+        break if diagonal2_res.length == 4
+      else
+        diagonal2_res = []
+      end
+      # binding.pry
+      k += 1
+    end
+    # binding.pry
+    return diagonal2_res if diagonal2_res == [char,char,char,char]
     nil
   end
 end

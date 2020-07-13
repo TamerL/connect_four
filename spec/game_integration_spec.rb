@@ -185,7 +185,7 @@ describe 'Running different game scenarios and checking the results' do
       expect(@game.get_winner).to eq(nil)
       expect(@board.is_full?).to eq(false)
       @game.write_onboard(@player2, 6)
-      binding.pry
+      # binding.pry
       expect(@game.board.grid).to eq([[],['x'],['x'],['x','o','x','o'],['o','x','o'],['x','o'],['o']])
       expect(@game.get_winner).to eq(@player2)
       expect(@board.is_full?).to eq(false)
