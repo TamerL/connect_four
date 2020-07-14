@@ -41,10 +41,10 @@ def print_game
     print "\n|"
     while col < Board::SIZE do
       # binding.pry
-      @board.grid[col][index].nil? ? (print " #{col} |") : (print " #{@board.grid[col][index]} |")
+      @board.grid[col][index].nil? ? (print "  #{col}  |") : (print "  #{@board.grid[col][index]}  |")
       col += 1
     end
-    puts "\n" + "----" *  Board::SIZE + "\n"
+    puts "\n" + "------" *  Board::SIZE + "\n"
     col = 0
     index -= 1
     # binding.pry
