@@ -1,1 +1,1 @@
-# connect_four
+# connect_four_game

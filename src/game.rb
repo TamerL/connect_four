@@ -27,7 +27,7 @@ class Game
     @last_played_y = @board.grid[@last_played_x].length - 1
     # binding.pry
     @player_turn = @player_marker.reject { |k, v| v == player }.values.first
-    binding.pry
+    # binding.pry
   end
 
   def get_winner
