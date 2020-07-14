@@ -40,4 +40,22 @@ class Board
     # elsif the board still have a zero means still have empty place
     true
   end
+
+  def print_board
+    col = 0
+    index = Board::SIZE
+    # binding.pry
+    while index >= 0 do
+      print "\n|"
+      while col < Board::SIZE do
+        # binding.pry
+        @grid[col][index].nil? ? (index == 7 ? (print "  #{col}  |"): (print "     |")) : (print "  #{@grid[col][index]}  |")
+        col += 1
+      end
+      puts "\n" + "------" *  Board::SIZE + "\n"
+      col = 0
+      index -= 1
+      # binding.pry
+    end
+  end
 end

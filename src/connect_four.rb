@@ -21,7 +21,7 @@ end
 
 def run_game
   while @game.get_winner.nil? && @game.board.is_full? == false
-    print_game
+    @board.print_board
     # binding.pry
     puts "#{@game.player_turn.name} it's your turn! please select a position from 0 to #{Board::SIZE - 1}"
     begin
@@ -31,24 +31,7 @@ def run_game
     end
   end
   puts (@game.get_winner.nil? ? 'The game is draw, no one wins!' : "#{@game.get_winner.name} wins!").to_s
-  print_game
-end
-
-def print_game
-  col = 0
-  index = Board::SIZE - 1
-  while index >= 0 do
-    print "\n|"
-    while col < Board::SIZE do
-      # binding.pry
-      @board.grid[col][index].nil? ? (print "  #{col}  |") : (print "  #{@board.grid[col][index]}  |")
-      col += 1
-    end
-    puts "\n" + "------" *  Board::SIZE + "\n"
-    col = 0
-    index -= 1
-    # binding.pry
-  end
+  @board.print_board
 end
 
 prepare_game
