@@ -35,6 +35,13 @@ describe 'Game' do
         @game.write_onboard(@player2, 4)
       end
     end
+    context "when a player's input is not an Integer" do
+      it "raises an error 'Only numbers in the mentioned range are allowed'" do
+        expect do
+          @game.write_onboard(@player2, 'wrong_input')
+        end.to raise_error('Only numbers in the mentioned ranges are allowed')
+      end
+    end
   end
 
   describe '#get_winner' do
