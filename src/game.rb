@@ -25,76 +25,55 @@ class Game
     board.write_onboard(last_played_char, pos)
     last_played_pos[0] = pos
     last_played_pos[1] = @board.grid[@last_played_pos[0]].length - 1
-    # binding.pry
+    # now will get the last played position on the grid in last_played_pos[x,y]
     @player_turn = @player_marker.reject { |k, v| v == player }.values.first
-    # binding.pry
+    # to toggle between players when the game is running
     build_winning_ranges
   end
 
   def build_winning_ranges
     @last_played_pos[1] = @board.grid[@last_played_pos[0]].length - 1
     @winning_ranges= []
-    last_played_pos[0] > 3 ? x = Array(last_played_pos[0] - 3..6) : x = Array(0 ..last_played_pos[0] + 3)
-    last_played_pos[1] > 3 ? y = Array(last_played_pos[1] - 3..6) : y = Array(0 ..last_played_pos[1] + 3)
-    build_x_range = Array.new(x.length,last_played_pos[1])
-    build_y_range = Array.new(y.length,last_played_pos[0])
-    winning_ranges << x.zip(build_x_range)
-    winning_ranges << build_y_range.zip(y)
-    winning_ranges << x.product(y).select {|arr| arr[0]-arr[1] == last_played_pos[0] - last_played_pos[1]}
-    winning_ranges << x.product(y).select {|arr| arr[0]+arr[1] == last_played_pos[0] + last_played_pos[1]}
-    # binding.pry
+    last_played_pos[0] > 3 ? x_range = Array(last_played_pos[0] - 3..6) : x_range = Array(0 ..last_played_pos[0] + 3)
+    # for the horizontal winning pattern, when the grid has [...['x'],['x'],['x'],['x']...]
+    last_played_pos[1] > 3 ? y_range = Array(last_played_pos[1] - 3..6) : y_range = Array(0 ..last_played_pos[1] + 3)
+    # for the vertical winning pattern, when the grid has [...['x','x','x','x']...]
+    to_be_combined_with_x_range = Array.new(x_range.length,last_played_pos[1])
+    to_be_combined_with_y_range = Array.new(y_range.length,last_played_pos[0])
+    winning_ranges << x_range.zip(to_be_combined_with_x_range)
+    # i.e. for a line = 2 , winning_ranges[0] will equal to something line [[x_range[0],2],[x_range[1],2]...]
+    winning_ranges << to_be_combined_with_y_range.zip(y_range)
+    # i.e. for a col = 2 , winning_ranges[1] will equal to something line [[2,y_range[0]],[2,,y_range[1]]...]
+    winning_ranges << x_range.product(y_range).select {|arr| arr[0]-arr[1] == last_played_pos[0] - last_played_pos[1]}
+    # winning_ranges[2] is used to check the diagonal direction / it will combine the x_range with the y_range to match that pattern
+    winning_ranges << x_range.product(y_range).select {|arr| arr[0]+arr[1] == last_played_pos[0] + last_played_pos[1]}
+    # winning_ranges[3] is used to check the diagonal direction \ it will combine the x_range with the y_range in a different way to match that pattern
   end
 
   def get_winner
     return nil if last_played_pos[0] == nil
     result = []
-    # binding.pry
-    winning_ranges.each { |arr|
-    result << iterator_loop(arr)
+    # will iterate in the winning patterns to find if 4 same characters exist in sequece
+    winning_ranges.each { |array|
+    result << collect_four(array)
     }
-    # result << vertical_pattern
-    #
-    # # binding.pry
-    # result << diagonal1_pattern
-    # result << diagonal2_pattern
+    # will decide the winner by checking the returned array of 4 identical characters
     array = result.find { |arr| arr == ['x']*4 || arr == ['o']*4}
-    if array
-      # binding.pry
-      # if array exists and is not full of zeros, then there is a winner
-      @player_marker[array.uniq.first]
-    else
-      # else the game is draw
-      # 'The game is draw, no one wins!'
-      nil
-    end
+    return @player_marker[array.uniq.first] if array
+    nil
   end
 
-  def iterator_loop(arr)
+  def collect_four(array)
     sequence_check=[]
-    # check for the data in the diagonal \
-    k = 0
-    x_range,y_range = [],[]
-
-
-    arr.each{|arr| x_range << arr[0]; y_range << arr[1] }
-    while k < x_range.length do
-      # binding.pry
-      if @board.grid[x_range[k]][y_range[k]] != nil && @board.grid[x_range[k]][y_range[k]] == last_played_char
-        sequence_check << @board.grid[x_range[k]][y_range[k]]
+    # will iterate in the passed array to find if 4 same characters exist in sequence
+    array.each { |array|
+      if @board.grid[array[0]][array[1]] != nil && @board.grid[array[0]][array[1]] == last_played_char
+        sequence_check << @board.grid[array[0]][array[1]]
         break if sequence_check.length == 4
       else
         sequence_check = []
       end
-      # binding.pry
-      k += 1
-    end
-    # binding.pry
-
-
-      # binding.pry
-
-
-    return sequence_check if sequence_check == [last_played_char,last_played_char,last_played_char,last_played_char]
-    nil
+    }
+    sequence_check
   end
 end
