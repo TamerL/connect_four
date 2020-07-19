@@ -36,9 +36,10 @@ class Game
     @winning_ranges= []
     last_played_pos[0] > 3 ? x = Array(last_played_pos[0] - 3..6) : x = Array(0 ..last_played_pos[0] + 3)
     last_played_pos[1] > 3 ? y = Array(last_played_pos[1] - 3..6) : y = Array(0 ..last_played_pos[1] + 3)
-    puts y
-    winning_ranges << x
-    winning_ranges << y
+    build_x_range = Array.new(x.length,last_played_pos[1])
+    build_y_range = Array.new(y.length,last_played_pos[0])
+    winning_ranges << x.zip(build_x_range)
+    winning_ranges << build_y_range.zip(y)
     winning_ranges << x.product(y).select {|arr| arr[0]-arr[1] == last_played_pos[0] - last_played_pos[1]}
     winning_ranges << x.product(y).select {|arr| arr[0]+arr[1] == last_played_pos[0] + last_played_pos[1]}
     # binding.pry
@@ -48,12 +49,14 @@ class Game
     return nil if last_played_pos[0] == nil
     result = []
     # binding.pry
-    result << horizontal_pattern
-    result << vertical_pattern
-
-    # binding.pry
-    result << diagonal1_pattern
-    result << diagonal2_pattern
+    winning_ranges.each { |arr|
+    result << iterator_loop(arr)
+    }
+    # result << vertical_pattern
+    #
+    # # binding.pry
+    # result << diagonal1_pattern
+    # result << diagonal2_pattern
     array = result.find { |arr| arr == ['x']*4 || arr == ['o']*4}
     if array
       # binding.pry
@@ -66,119 +69,32 @@ class Game
     end
   end
 
-  def horizontal_pattern
-    # @last_played_pos[1] = @board.grid[@last_played_pos[0]].length - 1
-
-    # binding.pry
-    horizontal=[]
-
-    # puts @winning_ranges[2]
-    # binding.pry
-    i = 0
-    # iterator = x.zip(y)
-    # (x.length + y.length).times{array << []}
-    # binding.pry
-    while i < winning_ranges[0].length
-      # binding.pry
-      if @board.grid[winning_ranges[0][i]][last_played_pos[1]] != nil && @board.grid[winning_ranges[0][i]][last_played_pos[1]] == last_played_char
-        horizontal << @board.grid[winning_ranges[0][i]][last_played_pos[1]]
-        # binding.pry
-        break if horizontal.length == 4
-      else
-        horizontal = []
-      end
-      # binding.pry
-      i += 1
-      # binding.pry
-    end
-    # binding.pry
-    return horizontal if horizontal == [last_played_char,last_played_char,last_played_char,last_played_char]
-    nil
-  end
-
-  def vertical_pattern
-    @last_played_pos[1] = @board.grid[@last_played_pos[0]].length - 1
-
-    # binding.pry
-    vertical=[]
-    # last_played_pos[0] > 3 ? x = Array(last_played_pos[0] - 3..6) : x = Array(0 ..last_played_pos[0] + 3)
-    # last_played_pos[1] > 3 ? y = Array(last_played_pos[1] - 3..6) : y = Array(0 ..last_played_pos[1] + 3)
-    # @winning_ranges[2] = x.product(y).select {|arr| arr[0]-arr[1] == last_played_pos[0] - last_played_pos[1]}
-    # @winning_ranges[3] = x.product(y).select {|arr| arr[0]+arr[1] == last_played_pos[0] + last_played_pos[1]}
-    # puts @winning_ranges[2]
-    # binding.pry
-    j = 0
-    # iterator = x.zip(y)
-    # (x.length + y.length).times{array << []}
-    # binding.pry
-    # puts (winning_ranges[1] == y)
-    # puts winning_ranges[1]
-    # puts y
-
-    # while j < y.length do
-    # while j < y.length do
-    #   if @board.grid[last_played_pos[0]][y[j]] != nil && @board.grid[last_played_pos[0]][y[j]] == last_played_char
-    #     vertical << @board.grid[last_played_pos[0]][y[j]]
-    #     break if vertical.length == 4
-    #   else
-    #     vertical = []
-    #   end
-    #   j += 1
-    # end
-    while j < winning_ranges[1].length do
-      if @board.grid[last_played_pos[0]][winning_ranges[1][j]] != nil && @board.grid[last_played_pos[0]][winning_ranges[1][j]] == last_played_char
-        vertical << @board.grid[last_played_pos[0]][winning_ranges[1][j]]
-        break if vertical.length == 4
-      else
-        vertical = []
-      end
-      j += 1
-    end
-    # binding.pry
-    return vertical if vertical == [last_played_char,last_played_char,last_played_char,last_played_char]
-    nil
-  end
-
-  def diagonal1_pattern
-    x_res=[]
-    # check for the data in the diagonal /
-    k = 0
-    x_diag,y_diag = [],[]
-    winning_ranges[2].each{|arr| x_diag << arr[0]; y_diag << arr[1] }
-    while k < x_diag.length do
-      # binding.pry
-      if @board.grid[x_diag[k]][y_diag[k]] != nil && @board.grid[x_diag[k]][y_diag[k]] == last_played_char
-        x_res << @board.grid[x_diag[k]][y_diag[k]]
-        break if x_res.length == 4
-      else
-        x_res = []
-      end
-      k += 1
-    end
-    # binding.pry
-    return x_res if x_res == [last_played_char,last_played_char,last_played_char,last_played_char]
-    nil
-  end
-
-  def diagonal2_pattern
-    y_res=[]
+  def iterator_loop(arr)
+    sequence_check=[]
     # check for the data in the diagonal \
     k = 0
-    x_diag,y_diag = [],[]
-    winning_ranges[3].each{|arr| x_diag << arr[0]; y_diag << arr[1] }
-    while k < x_diag.length do
+    x_range,y_range = [],[]
+
+
+    arr.each{|arr| x_range << arr[0]; y_range << arr[1] }
+    while k < x_range.length do
       # binding.pry
-      if @board.grid[x_diag[k]][y_diag[k]] != nil && @board.grid[x_diag[k]][y_diag[k]] == last_played_char
-        y_res << @board.grid[x_diag[k]][y_diag[k]]
-        break if y_res.length == 4
+      if @board.grid[x_range[k]][y_range[k]] != nil && @board.grid[x_range[k]][y_range[k]] == last_played_char
+        sequence_check << @board.grid[x_range[k]][y_range[k]]
+        break if sequence_check.length == 4
       else
-        y_res = []
+        sequence_check = []
       end
       # binding.pry
       k += 1
     end
     # binding.pry
-    return y_res if y_res == [last_played_char,last_played_char,last_played_char,last_played_char]
+
+
+      # binding.pry
+
+
+    return sequence_check if sequence_check == [last_played_char,last_played_char,last_played_char,last_played_char]
     nil
   end
 end
