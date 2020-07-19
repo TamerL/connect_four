@@ -39,7 +39,7 @@ describe 'Game' do
       it "raises an error 'Only numbers in the mentioned range are allowed'" do
         expect do
           @game.write_onboard(@player2, 'wrong_input')
-        end.to raise_error('Only numbers in the mentioned ranges are allowed')
+        end.to raise_error('Only numbers in the mentioned range are allowed')
       end
     end
   end
@@ -57,6 +57,7 @@ describe 'Game' do
     context 'check for a winner in the column' do
       it "returns @player2 when the board has 4 consecutive 'o' in a column" do
         expect(@board).to receive(:write_onboard).with('o', 3)
+        allow(@board).to receive(:grid).and_return([[],[],[],['o','o','o'],[],[],[]])
         @game.write_onboard(@player2,3)
         allow(@board).to receive(:grid).and_return([[],[],[],['o','o','o','o'],[],[],[]])
         expect(@game.get_winner).to eq(@player2)
@@ -100,6 +101,7 @@ describe 'Game' do
     context 'when the grid is full and there is a winner, if it is player2' do
       it 'returns @player2' do
         expect(@board).to receive(:write_onboard).with('o', 6)
+        allow(@board).to receive(:grid).and_return([["x", "x", "x", "o", "o", "o", "x"], ["o", "o", "o", "x", "x", "x", "o"], ["x", "x", "x", "o", "o", "o", "x"], ["o", "o", "o", "x", "x", "x", "o"], ["x", "x", "x", "o", "o", "o", "x"], ["o", "o", "o", "x", "x", "x", "o"], ["x", "x", "x", "o", "o", "o"]])
         @game.write_onboard(@player2,6)
         allow(@board).to receive(:grid).and_return([["x", "x", "x", "o", "o", "o", "x"], ["o", "o", "o", "x", "x", "x", "o"], ["x", "x", "x", "o", "o", "o", "x"], ["o", "o", "o", "x", "x", "x", "o"], ["x", "x", "x", "o", "o", "o", "x"], ["o", "o", "o", "x", "x", "x", "o"], ["x", "x", "x", "o", "o", "o", "o"]])
         expect(@game.get_winner).to eq(@player2)
