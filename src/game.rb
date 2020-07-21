@@ -32,18 +32,25 @@ class Game
   end
 
   def build_winning_ranges
-    @last_played_pos[1] = @board.grid[@last_played_pos[0]].length - 1
     @winning_ranges= []
     last_played_pos[0] > 3 ? x_range = Array(last_played_pos[0] - 3..6) : x_range = Array(0 ..last_played_pos[0] + 3)
-    # for the horizontal winning pattern, when the grid has [...['x'],['x'],['x'],['x']...]
+    # To be used to check the horizontal winning pattern range, when the grid has [...['x'],['x'],['x'],['x']...]
     last_played_pos[1] > 3 ? y_range = Array(last_played_pos[1] - 3..6) : y_range = Array(0 ..last_played_pos[1] + 3)
-    # for the vertical winning pattern, when the grid has [...['x','x','x','x']...]
+    # To be used to check the vertical winning pattern, when the grid has [...['x','x','x','x']...]
     to_be_combined_with_x_range = Array.new(x_range.length,last_played_pos[1])
+    # Building an array to of repeated last_played_pos[1] with the length of x_range
     to_be_combined_with_y_range = Array.new(y_range.length,last_played_pos[0])
+    # Building an array to of repeated last_played_pos[0] with the length of y_range
     winning_ranges << x_range.zip(to_be_combined_with_x_range)
-    # i.e. for a line = 2 , winning_ranges[0] will equal to something line [[x_range[0],2],[x_range[1],2]...]
+    # This is the two dimentional array of points on the grid which checks the
+    # horizontal winning patter
+    # i.e. for a line = 2
+    # winning_ranges[0] will equal to something line [[x_range[0],2],[x_range[1],2]...]
     winning_ranges << to_be_combined_with_y_range.zip(y_range)
-    # i.e. for a col = 2 , winning_ranges[1] will equal to something line [[2,y_range[0]],[2,,y_range[1]]...]
+    # This is the two dimentional array of points on the grid which checks the
+    # vertical winning patter
+    # i.e. for a col = 2
+    # winning_ranges[1] will equal to something line [[2,y_range[0]],[2,,y_range[1]]...]
     winning_ranges << x_range.product(y_range).select {|arr| arr[0]-arr[1] == last_played_pos[0] - last_played_pos[1]}
     # winning_ranges[2] is used to check the diagonal direction / it will combine the x_range with the y_range to match that pattern
     winning_ranges << x_range.product(y_range).select {|arr| arr[0]+arr[1] == last_played_pos[0] + last_played_pos[1]}
