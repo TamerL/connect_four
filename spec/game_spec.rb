@@ -50,7 +50,7 @@ describe 'Game' do
         expect(@board).to receive(:write_onboard).with('x', 1)
         @game.write_onboard(@player1,1)
         allow(@board).to receive(:grid).and_return([[],['x'],['x'],['x'],['x'],[],[]])
-        expect(@game.get_winner).to eq(@player1)
+        expect(@game.get_winner(1)).to eq(@player1)
       end
     end
 
@@ -60,7 +60,7 @@ describe 'Game' do
         allow(@board).to receive(:grid).and_return([[],[],[],['o','o','o'],[],[],[]])
         @game.write_onboard(@player2,3)
         allow(@board).to receive(:grid).and_return([[],[],[],['o','o','o','o'],[],[],[]])
-        expect(@game.get_winner).to eq(@player2)
+        expect(@game.get_winner(3)).to eq(@player2)
       end
     end
 
@@ -69,14 +69,14 @@ describe 'Game' do
         expect(@board).to receive(:write_onboard).with('o', 3)
         @game.write_onboard(@player2,3)
         allow(@board).to receive(:grid).and_return([[],['x'],['x'],['x','o','x','o'],['o','x','o'],['x','o'],['o']])
-        expect(@game.get_winner).to eq(@player2)
+        expect(@game.get_winner(3)).to eq(@player2)
       end
 
       it 'returns @player2 when the / diagonal is full of o' do
         expect(@board).to receive(:write_onboard).with('o', 3)
         @game.write_onboard(@player2,3)
         allow(@board).to receive(:grid).and_return([[],['o'],['x','o'],['x','x','o'],['x','o','x','o'],[],[]])
-        expect(@game.get_winner).to eq(@player2)
+        expect(@game.get_winner(3)).to eq(@player2)
       end
     end
 
@@ -85,7 +85,7 @@ describe 'Game' do
         expect(@board).to receive(:write_onboard).with('o', 3)
         @game.write_onboard(@player2,3)
         allow(@board).to receive(:grid).and_return([[],['x'],['x'],['x','o','x','o'],['o','x','o'],['x','o'],[]])
-        expect(@game.get_winner).to eq(nil)
+        expect(@game.get_winner(3)).to eq(nil)
       end
     end
 
@@ -94,7 +94,7 @@ describe 'Game' do
         expect(@board).to receive(:write_onboard).with('x', 3)
         @game.write_onboard(@player1,3)
         allow(@board).to receive(:grid).and_return([["x", "x", "x", "o", "o", "o", "x"], ["o", "o", "o", "x", "x", "x", "o"], ["x", "x", "x", "o", "o", "o", "x"], ["o", "o", "o", "x", "x", "x", "o"], ["x", "x", "x", "o", "o", "o", "x"], ["o", "o", "o", "x", "x", "x", "o"], ["x", "x", "x", "o", "o", "o", "x"]])
-        expect(@game.get_winner).to eq(nil)
+        expect(@game.get_winner(3)).to eq(nil)
       end
     end
 
@@ -104,7 +104,7 @@ describe 'Game' do
         allow(@board).to receive(:grid).and_return([["x", "x", "x", "o", "o", "o", "x"], ["o", "o", "o", "x", "x", "x", "o"], ["x", "x", "x", "o", "o", "o", "x"], ["o", "o", "o", "x", "x", "x", "o"], ["x", "x", "x", "o", "o", "o", "x"], ["o", "o", "o", "x", "x", "x", "o"], ["x", "x", "x", "o", "o", "o"]])
         @game.write_onboard(@player2,6)
         allow(@board).to receive(:grid).and_return([["x", "x", "x", "o", "o", "o", "x"], ["o", "o", "o", "x", "x", "x", "o"], ["x", "x", "x", "o", "o", "o", "x"], ["o", "o", "o", "x", "x", "x", "o"], ["x", "x", "x", "o", "o", "o", "x"], ["o", "o", "o", "x", "x", "x", "o"], ["x", "x", "x", "o", "o", "o", "o"]])
-        expect(@game.get_winner).to eq(@player2)
+        expect(@game.get_winner(6)).to eq(@player2)
       end
     end
   end

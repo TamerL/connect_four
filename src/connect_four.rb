@@ -20,17 +20,20 @@ def prepare_game
 end
 
 def run_game
-  while @game.get_winner.nil? && @game.board.is_full? == false
+  pos = 0
+  while @game.get_winner(pos).nil? && @game.board.is_full? == false
     @board.print_board
     # binding.pry
     puts "#{@game.player_turn.name} it's your turn! please select a position from 0 to #{Board::SIZE - 1}"
     begin
-      @game.write_onboard(@game.player_turn, gets.chomp.to_i)
+      input = gets.chomp
+      @game.write_onboard(@game.player_turn, input)
+      pos = input.to_i
     rescue StandardError => e
       puts e.message
     end
   end
-  puts (@game.get_winner.nil? ? 'The game is draw, no one wins!' : "#{@game.get_winner.name} wins!").to_s
+  puts (@game.get_winner(pos).nil? ? 'The game is draw, no one wins!' : "#{@game.get_winner(pos).name} wins!").to_s
   @board.print_board
 end
 
