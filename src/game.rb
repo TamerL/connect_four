@@ -29,14 +29,13 @@ class Game
     last_played_pos = [pos,@board.grid[pos].length - 1]
     return nil if last_played_pos[0] == nil
     winning_ranges = build_winning_ranges(last_played_char,last_played_pos)
-    result = []
-    winning_ranges.each { |array|
-    result << collect_four(array,last_played_char)
+    ranges_result = winning_ranges.collect { |array|
+      checkfor_four(array,last_played_char)
     }
     # will decide the winner by checking the returned array of 4 identical characters
-    array = result.find { |arr| arr == ['x']*4 || arr == ['o']*4}
-    return @player_marker[array.uniq.first] if array
-    nil
+    # 'result' will have the 4 characters if the sequence exist
+    four_in_seq = ranges_result.find { |arr| arr == ['x']*4 || arr == ['o']*4}
+    four_in_seq.nil? ? nil : @player_marker[four_in_seq.uniq.first]
   end
 
   private
@@ -94,17 +93,18 @@ class Game
     array
   end
 
-  def collect_four(array,last_played_char)
-    sequence_check=[]
+  def checkfor_four(array,last_played_char)
+    four_in_seq = []
     # will iterate in the passed array to find if 4 same characters exist in sequence
     array.each { |array|
       if @board.grid[array[0]][array[1]] != nil && @board.grid[array[0]][array[1]] == last_played_char
-        sequence_check << @board.grid[array[0]][array[1]]
-        break if sequence_check.length == 4
+        four_in_seq << @board.grid[array[0]][array[1]]
+        break if four_in_seq.length == 4
       else
-        sequence_check = []
+        four_in_seq = []
       end
     }
-    sequence_check
+    return four_in_seq if four_in_seq.length == 4
+    nil
   end
 end
